@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Serve static assets from public/ (images, icons, etc.)
+RewriteCond %{DOCUMENT_ROOT}/public/%{REQUEST_URI} -f
+RewriteRule ^(.+)$ public/$1 [L]
+
+# Serve existing files/directories directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route everything through index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
