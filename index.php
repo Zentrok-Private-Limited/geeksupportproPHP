@@ -5,12 +5,15 @@
  */
 
 /* ------------------------------------------------------------------ */
-/*  Serve static assets from public/ folder                           */
-/*  Maps requests like /images/logo.webp → public/images/logo.webp    */
+/*  Serve static assets from root or public/ folder                   */
+/*  Maps requests like /images/logo.webp                              */
 /*  Works with PHP built-in server, Apache, Nginx — any setup.        */
 /* ------------------------------------------------------------------ */
 $uri_raw = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$static  = __DIR__ . '/public' . $uri_raw;
+$static  = __DIR__ . $uri_raw;
+if (!is_file($static)) {
+    $static = __DIR__ . '/public' . $uri_raw;
+}
 
 if ($uri_raw !== '/' && is_file($static)) {
     $ext = strtolower(pathinfo($static, PATHINFO_EXTENSION));

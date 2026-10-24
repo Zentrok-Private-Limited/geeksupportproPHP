@@ -1,6 +1,10 @@
 {
   "builds": [
     {
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
       "src": "api/index.php",
       "use": "vercel-php@0.7.2",
       "config": {
@@ -14,7 +18,7 @@
       "dest": "/public/images/$1"
     },
     {
-      "src": "/(.+\\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|woff|woff2|ttf|json))",
+      "src": "/(apple-icon\\.png|chat-support\\.png|icon.*|placeholder.*)",
       "dest": "/public/$1"
     },
     {
