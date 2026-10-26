@@ -78,7 +78,7 @@ function render_header(): void {
       <span>|</span>
       <a href="/remote-support" class="hover:text-yellow-300 inline-flex items-center gap-1">🔑 Enter Session PIN</a>
       <span>|</span>
-      <a href="/support" class="hover:text-yellow-300 inline-flex items-center gap-1">⚡ <?= e($siteConfig['name'] ?? 'Geek Support') ?></a>
+      <a href="/support" class="hover:text-yellow-300 inline-flex items-center gap-1">⚡ Geek Support</a>
     </div>
   </div>
 </div>
