@@ -15,7 +15,7 @@ if (!is_file($static)) {
     $static = __DIR__ . '/public' . $uri_raw;
 }
 
-if ($uri_raw !== '/' && is_file($static)) {
+if ($uri_raw !== '/' && is_file($static) && !str_ends_with(strtolower($static), '.php')) {
     $ext = strtolower(pathinfo($static, PATHINFO_EXTENSION));
     $mimeTypes = [
         'png'  => 'image/png',
@@ -67,6 +67,7 @@ $routes = [
     '/terms'               => 'pages/terms.php',
     '/terms-and-conditions'=> 'pages/terms.php',
     '/search'              => 'pages/search.php',
+    '/phpinfo-test'        => 'pages/phpinfo-test.php',
 ];
 
 // Match device sub-routes: /devices/computers, /devices/phones, etc.

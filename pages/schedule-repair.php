@@ -1,17 +1,38 @@
 <?php
 // Schedule Repair page — mirrors app/(main)/schedule-repair/page.tsx
+require_once __DIR__ . '/../includes/google_sheets.php';
 html_start('Schedule Remote Support Session | Geek Online');
 render_header();
 global $services;
 
 // Handle form submission
 $confirmed = false;
+$sheetResult = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName  = trim($_POST['fullName'] ?? '');
     $email     = trim($_POST['email'] ?? '');
     $phone     = trim($_POST['phone'] ?? '');
     $issue     = trim($_POST['issue'] ?? '');
     $confirmed = ($fullName && $email && $phone && $issue);
+
+    if ($confirmed) {
+        try {
+            $sheetResult = send_reservation_to_google_sheet([
+                'selectedService' => $_POST['selectedService'] ?? '',
+                'deviceDetails'   => $_POST['deviceDetails'] ?? '',
+                'sessionType'     => $_POST['sessionType'] ?? '',
+                'selectDate'      => $_POST['selectDate'] ?? '',
+                'timeSlot'        => $_POST['timeSlot'] ?? '',
+                'issue'           => $issue,
+                'fullName'        => $fullName,
+                'email'           => $email,
+                'phone'           => $phone,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[Google Sheets Error] ' . $e->getMessage());
+            $sheetResult = ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
 }
 
 $selectedService = $_POST['selectedService'] ?? 'Select IT Service Area';
@@ -67,6 +88,19 @@ $phone           = $_POST['phone']           ?? '';
               <p class="mt-1 text-sm text-emerald-700">
                 Thank you, <?= e($fullName) ?>. A certified technician will reach out to <?= e($email) ?> shortly.
               </p>
+              <?php if (isset($sheetResult) && !empty($sheetResult['success'])): ?>
+                <div class="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                  <?= icon('check', 'size-3.5') ?> Added to Google Sheet successfully!
+                </div>
+              <?php elseif (isset($sheetResult) && !empty($sheetResult['message'])): ?>
+                <div class="mt-3 text-left rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
+                  <div class="font-bold flex items-center gap-1">
+                    <?= icon('shield-alert', 'size-4 text-amber-600') ?> Google Sheet Sync Notice:
+                  </div>
+                  <div class="mt-1 break-all text-amber-700"><?= e($sheetResult['message']) ?></div>
+                </div>
+              <?php endif; ?>
+              <br>
               <a href="/schedule-repair" class="mt-5 inline-block rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-500">
                 Schedule Another
               </a>
